@@ -119,7 +119,7 @@
             </el-form-item>
           </el-col>
           <el-col  v-if="form.menuType === 'C'" :span="12" >
-            <el-form-item label="实体类名称" prop="entityName" :rules="[{ required: true, message: '请输入内容', trigger: 'blur' }]" >
+            <el-form-item label="实体类名称" prop="entityName" :rules="[{ required: false, message: '请输入内容', trigger: 'blur' }]" >
               <el-input v-model="form.entityName" placeholder="后台实体类名称" />
             </el-form-item>
           </el-col>
