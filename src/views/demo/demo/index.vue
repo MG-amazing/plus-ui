@@ -103,12 +103,12 @@
 <script setup name="Demo" lang="ts">
 import { listDemo, getDemo, delDemo, addDemo, updateDemo } from '@/api/demo/demo';
 import { DemoVO, DemoQuery, DemoForm } from '@/api/demo/demo/types';
-import AuthComposition from "@/composition/AuthComposition";
+import ListComposition from "@/composition/ListComposition";
+// import AuthComposition from "@/composition/AuthComposition";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { authData, loadMenuButton } = AuthComposition();
+const { pageTable } = ListComposition();
 
-console.log(authData.authButton.row)
 const demoList = ref<DemoVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -156,6 +156,7 @@ const data = reactive<PageData<DemoForm, DemoQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
 
 /** 查询测试单列表 */
 const getList = async () => {
