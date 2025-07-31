@@ -51,12 +51,21 @@
 
       <el-table v-loading="loading" :data="demoList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column v-if="true" label="主键" align="center" prop="id" />
-        <el-table-column label="部门id" align="center" prop="deptId" />
-        <el-table-column label="用户id" align="center" prop="userId" />
-        <el-table-column label="排序号" align="center" prop="orderNum" />
-        <el-table-column label="key键" align="center" prop="testKey" />
-        <el-table-column label="值" align="center" prop="value" />
+        <el-table-column v-if="true" label="序号" prop="index" type="index" align="center" width="55" />
+        <template v-for="(column, key) in pageTable.columns" :key="key">
+          <el-table-column v-if="column.show" :prop="column.prop" :label="column.label">
+            <template #default="scope">
+              <template v-if="column.prop === 'id'">
+                {{ scope.row[column.prop] }}
+              </template>
+              <template v-else-if="column.prop === 'result'"> </template>
+              <template v-else>
+                {{ scope.row[column.prop] }}
+              </template>
+            </template>
+          </el-table-column>
+        </template>
+
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="修改" placement="top">
@@ -103,12 +112,20 @@
 <script setup name="Demo" lang="ts">
 import { listDemo, getDemo, delDemo, addDemo, updateDemo } from '@/api/demo/demo';
 import { DemoVO, DemoQuery, DemoForm } from '@/api/demo/demo/types';
-import ListComposition from "@/composition/ListComposition";
+import ListComposition from '@/composition/ListComposition';
 // import AuthComposition from "@/composition/AuthComposition";
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { pageTable } = ListComposition();
 
+pageTable.columns = [
+  { label: 'id', prop: 'id', show: true },
+  { label: '部门id', prop: 'deptId', show: true },
+  { label: '用户id', prop: 'userId', show: true },
+  { label: '排序号', prop: 'orderNum', show: true },
+  { label: 'key键', prop: 'testKey', show: true },
+  { label: '值', prop: 'value', show: true }
+];
 const demoList = ref<DemoVO[]>([]);
 const buttonLoading = ref(false);
 const loading = ref(true);
@@ -156,7 +173,7 @@ const data = reactive<PageData<DemoForm, DemoQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-
+pageTable.form = queryParams;
 
 /** 查询测试单列表 */
 const getList = async () => {
