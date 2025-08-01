@@ -119,7 +119,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="form.menuType === 'C'" :span="12">
-            <el-form-item label="实体类名称" prop="entityName" :rules="[{ required: false, message: '请输入内容', trigger: 'blur' }]">
+            <el-form-item label="实体类名称" prop="entityName" :rules="[{ validator: validateCustom, trigger: 'blur' }]">
               <el-input v-model="form.entityName" placeholder="后台实体类名称" />
             </el-form-item>
           </el-col>
@@ -282,6 +282,7 @@ import { addMenu, delMenu, getMenu, listMenu, updateMenu } from '@/api/system/me
 import { MenuForm, MenuQuery, MenuVO } from '@/api/system/menu/types';
 import { MenuTypeEnum } from '@/enums/MenuTypeEnum';
 import { ref } from 'vue';
+import { checkClass } from '@/api/tool/check-class';
 
 interface MenuOptionsType {
   menuId: number;
@@ -421,6 +422,24 @@ const handleDelete = async (row: MenuVO) => {
   await delMenu(row.menuId);
   await getList();
   proxy?.$modal.msgSuccess('删除成功');
+};
+// 支持 async 的自定义验证器方法
+const validateCustom = async (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(); // 非必填，空值直接通过
+  }
+
+  try {
+    const res = await checkClass({ entityName: value });
+
+    if (res.data !== 'true') {
+      callback(new Error(res.data));
+    } else {
+      callback();
+    }
+  } catch (err) {
+    callback(new Error('验证失败，请稍后再试'));
+  }
 };
 
 onMounted(() => {

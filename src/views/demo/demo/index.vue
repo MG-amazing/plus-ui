@@ -79,6 +79,7 @@
       </el-table>
 
       <pagination
+        ref="pageRef"
         v-show="total > 0"
         v-model:page="queryParams.pageNum"
         :pageTable="pageTable"
@@ -124,6 +125,7 @@ import ListComposition from '@/composition/ListComposition';
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 const { pageTable } = ListComposition();
+const pageRef = ref(null);
 
 pageTable.columns = [
   { label: 'id', prop: 'id', show: true },
