@@ -78,7 +78,14 @@
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        :pageTable="pageTable"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+      />
     </el-card>
     <!-- 添加或修改测试单对话框 -->
     <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
@@ -173,8 +180,7 @@ const data = reactive<PageData<DemoForm, DemoQuery>>({
 });
 
 const { queryParams, form, rules } = toRefs(data);
-pageTable.form = queryParams;
-
+pageTable.form = queryParams.value;
 /** 查询测试单列表 */
 const getList = async () => {
   loading.value = true;

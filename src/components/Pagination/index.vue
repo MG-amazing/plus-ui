@@ -16,21 +16,56 @@
 
 <script setup name="Pagination" lang="ts">
 import { scrollTo } from '@/utils/scroll-to';
-import { propTypes } from '@/utils/propTypes';
+import { getInfoByPath } from '@/api/pageInfo';
+import { useRoute } from 'vue-router';
+import { toRaw } from 'vue';
 
-const props = defineProps({
-  total: propTypes.number,
-  page: propTypes.number.def(1),
-  limit: propTypes.number.def(20),
-  pageSizes: { type: Array<number>, default: () => [10, 20, 30, 50] },
-  // 移动端页码按钮的数量端默认值5
-  pagerCount: propTypes.number.def(document.body.clientWidth < 992 ? 5 : 7),
-  layout: propTypes.string.def('total, sizes, prev, pager, next, jumper'),
-  background: propTypes.bool.def(true),
-  autoScroll: propTypes.bool.def(true),
-  hidden: propTypes.bool.def(false),
-  float: propTypes.string.def('right')
-});
+const route = useRoute();
+
+interface PageTable {
+  form: Record<string, any>;
+  columns: any[];
+  entityName: string;
+  exportFunction: string;
+}
+
+const props = withDefaults(
+  defineProps<{
+    total?: number;
+    page?: number;
+    limit?: number;
+    pageSizes?: number[];
+    pagerCount?: number;
+    layout?: string;
+    background?: boolean;
+    autoScroll?: boolean;
+    hidden?: boolean;
+    float?: string;
+    pageTable: PageTable;
+  }>(),
+  {
+    page: 1,
+    limit: 20,
+    pageSizes: () => [10, 20, 30, 50],
+    pagerCount: document.body.clientWidth < 992 ? 5 : 7,
+    layout: 'total, sizes, prev, pager, next, jumper',
+    background: true,
+    autoScroll: true,
+    hidden: false,
+    float: 'right',
+    pageTable: () => ({ form: {}, columns: [], entityName: '', exportFunction: '' })
+  }
+);
+
+function loadMenuButton() {
+  const rawTable = toRaw(props.pageTable);
+
+  getInfoByPath({ path: route.fullPath + '/index' }).then(({ code, data, msg }) => {
+    rawTable.entityName = data.entityName;
+    rawTable.exportFunction = data.exportFunction;
+  });
+}
+loadMenuButton();
 
 const emit = defineEmits(['update:page', 'update:limit', 'pagination']);
 const currentPage = computed({
@@ -64,6 +99,7 @@ function handleCurrentChange(val: number) {
     scrollTo(0, 800);
   }
 }
+defineExpose({ loadMenuButton });
 </script>
 
 <style lang="scss" scoped>

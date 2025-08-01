@@ -101,7 +101,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="form.menuType==='F'">
+          <el-col :span="24" v-if="form.menuType === 'F'">
             <el-form-item label="按钮位置" prop="buttonType">
               <el-checkbox v-model="form.buttonTypeTop" label="顶部" size="large" true-label="true" false-label="false" />
               <el-checkbox v-model="form.buttonTypeRow" label="表格内" size="large" true-label="true" false-label="false" />
@@ -118,9 +118,14 @@
               <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
             </el-form-item>
           </el-col>
-          <el-col  v-if="form.menuType === 'C'" :span="12" >
-            <el-form-item label="实体类名称" prop="entityName" :rules="[{ required: false, message: '请输入内容', trigger: 'blur' }]" >
+          <el-col v-if="form.menuType === 'C'" :span="12">
+            <el-form-item label="实体类名称" prop="entityName" :rules="[{ required: false, message: '请输入内容', trigger: 'blur' }]">
               <el-input v-model="form.entityName" placeholder="后台实体类名称" />
+            </el-form-item>
+          </el-col>
+          <el-col v-if="form.menuType === 'C'" :span="12">
+            <el-form-item prop="exportFunction" label="导出方法">
+              <el-input v-model="form.exportFunction" placeholder="请输入导出方法" maxlength="255" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -240,11 +245,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col v-if="form.menuType === 'F'&&form.perms.includes('export')" :span="12">
-            <el-form-item prop="exportFunction" label="导出方法">
-            <el-input v-model="form.exportFunction" placeholder="请输入导出方法" maxlength="255" />
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item>
               <template #label>
@@ -280,7 +281,7 @@
 import { addMenu, delMenu, getMenu, listMenu, updateMenu } from '@/api/system/menu';
 import { MenuForm, MenuQuery, MenuVO } from '@/api/system/menu/types';
 import { MenuTypeEnum } from '@/enums/MenuTypeEnum';
-import {ref} from "vue";
+import { ref } from 'vue';
 
 interface MenuOptionsType {
   menuId: number;
@@ -305,7 +306,7 @@ const dialog = reactive<DialogOption>({
 const queryFormRef = ref<ElFormInstance>();
 const menuFormRef = ref<ElFormInstance>();
 const initFormData = {
-  perms:'',
+  perms: '',
   path: '',
   menuId: undefined,
   parentId: 0,
@@ -398,7 +399,6 @@ const handleUpdate = async (row: MenuVO) => {
   await getTreeselect();
   if (row.menuId) {
     const { data } = await getMenu(row.menuId);
-    console.log(data)
     form.value = data;
   }
   dialog.visible = true;

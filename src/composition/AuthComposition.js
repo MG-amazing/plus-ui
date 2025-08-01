@@ -1,7 +1,6 @@
 import { inject, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-import { getButtonByPath } from '@/api/pageInfo.js';
 export default function () {
   const route = useRoute();
 
@@ -18,9 +17,7 @@ export default function () {
   });
 
   function loadMenuButton() {
-    getButtonByPath({ path: route.fullPath + '/index' }).then(({ success, result, message }) => {
-      authData.authButton = result;
-    });
+
   }
   loadMenuButton();
 

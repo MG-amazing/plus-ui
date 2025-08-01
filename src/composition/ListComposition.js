@@ -1,60 +1,21 @@
-import { inject, reactive, ref } from 'vue';
-import { getButtonByPath } from '@/api/pageInfo.js';
-import { useRoute } from 'vue-router';
+import { reactive  } from 'vue';
 
 export default function () {
-  const global = inject('global');
-  const route = useRoute();
-
-  // 分页参数
-  const pagination = reactive({
-    layout: '->,total, sizes, prev, pager, next, jumper', // 组件布局，子组件名用逗号分隔
-    total: 0, // 总条目数
-    currentPage: 1, // 当前页数
-    pageSize: 100, // 每页显示条目数的初始值
-    pageCount: 0, // 总页数
-    pagerCount: 5, // 设置最大页码按钮数。 页码按钮的数量，当总页数超过该值时会折叠
-    pageSizes: [20, 50, 100, 500, 1000] // 每页显示个数选择器的选项设置
-  });
-
   // 表格参数
   const pageTable = reactive({
     form: {},
     data: [],
     columns: [],
-    changeData: [],
-    showCheck: true,
-    showIndex: true,
-    loading: false,
-    queryPage: null,
-    tableOperateColumn: {},
     entityName: '',
     exportFunction: '',
     isDynamic: false,
     fileName: ''
   });
 
-  // 传递表单对象
-  const recordInfo = reactive({
-    id: '',
-    type: 0,
-    show: false
-  });
-
-  const searchFormRef = ref();
-  const pageTableRef = ref();
-  const listPageRef = ref();
-
-  const pageName = ref('');
-  function loadMenuButton() {
-    getButtonByPath({ path: route.fullPath + '/index' }).then(({ success, result, message }) => {});
-  }
-  loadMenuButton();
 
   function exportExcelData(data) {
     data.form = pageTable.form;
     data.columns = pageTable.columns;
-    data.size = pagination.total;
 
     // commonExportExcel(global.$http, param, data)
     //     .then((result) => {
@@ -91,30 +52,7 @@ export default function () {
     // })
   }
 
-  /*
-   * 添加排序信息
-   * */
-  function sortChange(obj) {
-    if (obj.order === null) {
-      pageTable.form.fieldSort = null;
-    } else {
-      pageTable.form.fieldSort = obj.order === 'ascending' ? 'asc' : 'desc';
-    }
-    pageTable.form.fieldName = obj.prop;
-    pageTable.queryPage();
-  }
-
   return {
-    pageName,
-    pagination,
-    pageTable,
-    recordInfo,
-    searchFormRef,
-    pageTableRef,
-    listPageRef,
-    loadMenuButton,
-    sortChange,
-    exportExcelData,
-    exportExcelListData
+    pageTable
   };
 }

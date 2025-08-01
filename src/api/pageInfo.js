@@ -1,11 +1,11 @@
 import request from '@/utils/request';
 
-function getButtonByPath(params) {
+function getInfoByPath(params) {
   return request({
-    url: '/system/menu/getbuttonbypath',
+    url: '/system/menu/getInfoByPath',
     method: 'post',
     params
   });
 }
 
-export { getButtonByPath };
+export { getInfoByPath };
