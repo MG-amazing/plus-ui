@@ -16,47 +16,30 @@
 
 <script setup name="Pagination" lang="ts">
 import { scrollTo } from '@/utils/scroll-to';
+import { propTypes } from '@/utils/propTypes';
 import { getInfoByPath } from '@/api/pageInfo';
-import { useRoute } from 'vue-router';
-import { toRaw } from 'vue';
+import { exportCommonExcel } from '@/api/system/excel';
 
 const route = useRoute();
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
-interface PageTable {
-  form: Record<string, any>;
-  columns: any[];
-  entityName: string;
-  exportFunction: string;
-}
-
-const props = withDefaults(
-  defineProps<{
-    total?: number;
-    page?: number;
-    limit?: number;
-    pageSizes?: number[];
-    pagerCount?: number;
-    layout?: string;
-    background?: boolean;
-    autoScroll?: boolean;
-    hidden?: boolean;
-    float?: string;
-    pageTable: PageTable;
-  }>(),
-  {
-    page: 1,
-    limit: 20,
-    pageSizes: () => [10, 20, 30, 50],
-    pagerCount: document.body.clientWidth < 992 ? 5 : 7,
-    layout: 'total, sizes, prev, pager, next, jumper',
-    background: true,
-    autoScroll: true,
-    hidden: false,
-    float: 'right',
-    pageTable: () => ({ form: {}, columns: [], entityName: '', exportFunction: '' })
+const props = defineProps({
+  total: propTypes.number,
+  page: propTypes.number.def(1),
+  limit: propTypes.number.def(20),
+  pageSizes: { type: Array<number>, default: () => [10, 20, 30, 50] },
+  // 移动端页码按钮的数量端默认值5
+  pagerCount: propTypes.number.def(document.body.clientWidth < 992 ? 5 : 7),
+  layout: propTypes.string.def('total, sizes, prev, pager, next, jumper'),
+  background: propTypes.bool.def(true),
+  autoScroll: propTypes.bool.def(true),
+  hidden: propTypes.bool.def(false),
+  float: propTypes.string.def('right'),
+  pageTable: {
+    type: Object,
+    default: () => {}
   }
-);
-
+});
 function loadMenuButton() {
   const rawTable = toRaw(props.pageTable);
 
@@ -66,6 +49,34 @@ function loadMenuButton() {
   });
 }
 loadMenuButton();
+async function exportExcel() {
+  try {
+    const response = await exportCommonExcel({}, props.pageTable);
+    const blob = new Blob([response]);
+
+    // 如果后端返回的是错误页面/JSON，而不是 Excel 文件，则尝试读取并判断
+    const text = await blob.text();
+    try {
+      const json = JSON.parse(text);
+      // 如果能转成 JSON，说明其实是后端错误信息而不是 Excel
+      ElMessage.error(json.message || '导出失败');
+      return;
+    } catch {
+      // 不可转成 JSON，说明是正常的文件流，可以继续下载
+    }
+
+    const downloadElement = document.createElement('a');
+    const href = window.URL.createObjectURL(blob);
+    downloadElement.href = href;
+    downloadElement.download = props.pageTable.fileName;
+    document.body.appendChild(downloadElement);
+    downloadElement.click();
+    document.body.removeChild(downloadElement);
+    window.URL.revokeObjectURL(href);
+  } catch (error) {
+    ElMessage.error('导出失败，请稍后再试');
+  }
+}
 
 const emit = defineEmits(['update:page', 'update:limit', 'pagination']);
 const currentPage = computed({
@@ -99,7 +110,7 @@ function handleCurrentChange(val: number) {
     scrollTo(0, 800);
   }
 }
-defineExpose({ loadMenuButton });
+defineExpose({ loadMenuButton, exportExcel });
 </script>
 
 <style lang="scss" scoped>

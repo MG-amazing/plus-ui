@@ -1,6 +1,10 @@
-import { reactive  } from 'vue';
+import { reactive } from 'vue';
+import { getButtons } from '@/api/pageInfo.js';
+import { useRoute } from 'vue-router';
 
 export default function () {
+  const route = useRoute();
+
   // 表格参数
   const pageTable = reactive({
     form: {},
@@ -9,10 +13,19 @@ export default function () {
     entityName: '',
     exportFunction: '',
     isDynamic: false,
-    fileName: ''
+    fileName: '',
+    row: [],
+    top: [],
+    type: '0', //导出本页 0 导出全部1
+    sheetName: ''
   });
-
-
+  function getButtonsData() {
+    getButtons({ path: route.fullPath }).then(({ code, data, msg }) => {
+      pageTable.row = data.row;
+      pageTable.top = data.top;
+    });
+  }
+  getButtonsData();
   function exportExcelData(data) {
     data.form = pageTable.form;
     data.columns = pageTable.columns;

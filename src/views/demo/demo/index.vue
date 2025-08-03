@@ -31,7 +31,17 @@
     <el-card shadow="hover">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <top-button @handleAdd="handleAdd" @handleUpdate="handleUpdate" @handleDelete="handleDelete" :single="single" :multiple="multiple" />
+          <top-button
+            @handleAdd="handleAdd"
+            @handleUpdate="handleUpdate"
+            @handleDelete="handleDelete"
+            @exportExcel="exportExcel"
+            @aaa="aaa"
+            :tops="pageTable.top"
+            :pageTable="pageTable"
+            :single="single"
+            :multiple="multiple"
+          />
           <el-col :span="1.5">
             <el-button v-hasPermi="['demo:demo:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
           </el-col>
@@ -136,6 +146,9 @@ const total = ref(0);
 
 const queryFormRef = ref<ElFormInstance>();
 const demoFormRef = ref<ElFormInstance>();
+function aaa() {
+  ElMessage.success('方法被触发');
+}
 
 const dialog = reactive<DialogOption>({
   visible: false,
@@ -266,6 +279,10 @@ const handleExport = () => {
     `demo_${new Date().getTime()}.xlsx`
   );
 };
+function exportExcel() {
+  pageTable.fileName = '测试单.xlsx';
+  pageRef.value.exportExcel();
+}
 
 onMounted(() => {
   getList();
