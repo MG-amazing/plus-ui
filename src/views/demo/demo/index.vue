@@ -31,17 +31,7 @@
     <el-card shadow="hover">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['demo:demo:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['demo:demo:edit']" type="success" plain icon="Edit" :disabled="single" @click="handleUpdate()">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['demo:demo:remove']" type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete()"
-              >删除</el-button
-            >
-          </el-col>
+          <top-button @handleAdd="handleAdd" @handleUpdate="handleUpdate" @handleDelete="handleDelete" :single="single" :multiple="multiple" />
           <el-col :span="1.5">
             <el-button v-hasPermi="['demo:demo:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
           </el-col>

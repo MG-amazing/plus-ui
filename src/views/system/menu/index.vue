@@ -101,10 +101,39 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="form.menuType === 'F'">
+          <el-col :span="12" v-if="form.menuType === 'F'">
             <el-form-item label="按钮位置" prop="buttonType">
               <el-checkbox v-model="form.buttonTypeTop" label="顶部" size="large" true-label="true" false-label="false" />
               <el-checkbox v-model="form.buttonTypeRow" label="表格内" size="large" true-label="true" false-label="false" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="form.menuType === 'F'">
+            <el-form-item label="按图标" prop="icon">
+              <!-- 图标选择器 -->
+              <icon-select v-model="form.icon" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="form.menuType === 'F'">
+            <el-form-item label="按钮颜色" prop="color">
+              <el-select
+                v-model="form.color"
+                placeholder="请选择颜色"
+                style="width: 200px"
+                class="color-select"
+                :style="{
+                  '--select-color': getColor(form.color)
+                }"
+              >
+                <template #prefix>
+                  <span class="color-box" :style="{ backgroundColor: getColor(form.color) }"></span>
+                </template>
+                <el-option v-for="item in colorOptions" :key="item.value" :label="item.label" :value="item.value">
+                  <div class="option-item">
+                    <span class="color-box" :style="{ backgroundColor: item.color }"></span>
+                    <span>{{ item.label }}</span>
+                  </div>
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col v-if="form.menuType !== 'F'" :span="24">
@@ -441,8 +470,48 @@ const validateCustom = async (rule: any, value: any, callback: any) => {
     callback(new Error('验证失败，请稍后再试'));
   }
 };
+const colorOptions = [
+  { label: 'primary', value: 'primary', color: 'var(--el-color-primary)' },
+  { label: 'success', value: 'success', color: 'var(--el-color-success)' },
+  { label: 'danger', value: 'danger', color: 'var(--el-color-danger)' },
+  { label: 'warning', value: 'warning', color: 'var(--el-color-warning)' }
+];
+function getColor(value: string): string {
+  const found = colorOptions.find((c) => c.value === value);
+  return found?.color || '#ffffff';
+}
 
 onMounted(() => {
   getList();
 });
 </script>
+<style scoped>
+.color-box {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+}
+
+.selected-box {
+  display: flex;
+  align-items: center;
+}
+
+.color-select .el-input__wrapper {
+  border: 1px solid var(--select-color);
+  background-color: #fff;
+  transition: border-color 0.3s;
+}
+
+.color-select .el-input__wrapper:hover {
+  box-shadow: 0 0 0 1px var(--select-color);
+}
+</style>

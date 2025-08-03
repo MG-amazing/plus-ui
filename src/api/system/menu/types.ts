@@ -61,13 +61,14 @@ export interface MenuForm {
   isCache?: string;
   menuType?: MenuTypeEnum;
   exportFunction?: string;
-  entityName?:string;
+  entityName?: string;
   visible?: string;
   status?: string;
   icon?: string;
   remark?: string;
   query?: string;
   perms?: string;
-  buttonTypeRow?:string;
-  buttonTypeTop?:string;
+  buttonTypeRow?: string;
+  buttonTypeTop?: string;
+  color?: string;
 }

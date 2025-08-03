@@ -7,5 +7,12 @@ function getInfoByPath(params) {
     params
   });
 }
+function getButtons(params) {
+  return request({
+    url: '/system/menu/getButtons',
+    method: 'post',
+    params
+  });
+}
 
-export { getInfoByPath };
+export { getInfoByPath, getButtons };
