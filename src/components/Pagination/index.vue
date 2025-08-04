@@ -42,8 +42,10 @@ const props = defineProps({
 });
 function loadMenuButton() {
   const rawTable = toRaw(props.pageTable);
-
-  getInfoByPath({ path: route.fullPath + '/index' }).then(({ code, data, msg }) => {
+  if (route.meta.component === undefined) {
+    return;
+  }
+  getInfoByPath({ path: route.meta.component }).then(({ code, data, msg }) => {
     rawTable.entityName = data.entityName;
     rawTable.exportFunction = data.exportFunction;
   });

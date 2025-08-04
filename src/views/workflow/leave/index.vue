@@ -21,41 +21,43 @@
     <el-card shadow="never">
       <template #header>
         <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['workflow:leave:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['workflow:leave:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
-          </el-col>
+          <top-button
+            @handleAdd="handleAdd"
+            @handleUpdate="handleUpdate"
+            @handleDelete="handleDelete"
+            :tops="pageTable.top"
+            :pageTable="pageTable"
+            :single="single"
+            :multiple="multiple"
+          />
+          <!--          <el-col :span="1.5">-->
+          <!--            <el-button v-hasPermi="['workflow:leave:add']" type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>-->
+          <!--          </el-col>-->
+          <!--          <el-col :span="1.5">-->
+          <!--            <el-button v-hasPermi="['workflow:leave:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>-->
+          <!--          </el-col>-->
           <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
         </el-row>
       </template>
 
       <el-table v-loading="loading" border :data="leaveList" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
-        <el-table-column v-if="false" label="主键" align="center" prop="id" />
-        <el-table-column label="请假类型" align="center">
-          <template #default="scope">
-            <el-tag>{{ options.find((e) => e.value === scope.row.leaveType)?.label }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="开始时间" align="center" prop="startDate">
-          <template #default="scope">
-            <span>{{ proxy.parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="结束时间" align="center" prop="endDate">
-          <template #default="scope">
-            <span>{{ proxy.parseTime(scope.row.endDate, '{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="请假天数" align="center" prop="leaveDays" />
-        <el-table-column label="请假原因" align="center" prop="remark" />
-        <el-table-column align="center" label="流程状态" min-width="70">
-          <template #default="scope">
-            <dict-tag :options="wf_business_status" :value="scope.row.status"></dict-tag>
-          </template>
-        </el-table-column>
+        <el-table-column v-if="true" label="序号" prop="index" type="index" align="center" width="55" />
+        <template v-for="(column, key) in pageTable.columns" :key="key">
+          <el-table-column v-if="column.show" :prop="column.prop" align="center" :label="column.label">
+            <template #default="scope">
+              <template v-if="column.prop === 'leaveType'">
+                <el-tag type="primary">{{ options.find((item: any) => item.value === scope.row[column.prop]).label }}</el-tag>
+              </template>
+              <template v-else-if="column.prop === 'status'">
+                <el-tag :type="wfDictMap[scope.row[column.prop]].elTagType">{{ wfDictMap[scope.row[column.prop]].label }}</el-tag>
+              </template>
+              <template v-else>
+                {{ scope.row[column.prop] }}
+              </template>
+            </template>
+          </el-table-column>
+        </template>
         <el-table-column label="操作" align="center" width="162">
           <template #default="scope">
             <el-row :gutter="10" class="mb8">
@@ -82,7 +84,14 @@
         </el-table-column>
       </el-table>
 
-      <pagination v-show="total > 0" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" :total="total" @pagination="getList" />
+      <pagination
+        v-show="total > 0"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        :total="total"
+        @pagination="getList"
+        :pageTable="pageTable"
+      />
     </el-card>
   </div>
 </template>
@@ -91,9 +100,11 @@
 import { delLeave, listLeave } from '@/api/workflow/leave';
 import { cancelProcessApply } from '@/api/workflow/instance';
 import { LeaveForm, LeaveQuery, LeaveVO } from '@/api/workflow/leave/types';
+import ListComposition from '@/composition/ListComposition';
+import _ from 'lodash';
+import { useDict } from '@/utils/dict';
 
-const { proxy } = getCurrentInstance() as ComponentInternalInstance;
-const { wf_business_status } = toRefs<any>(proxy?.useDict('wf_business_status'));
+const { pageTable } = ListComposition();
 const leaveList = ref<LeaveVO[]>([]);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -119,6 +130,14 @@ const options = [
     label: '婚假'
   }
 ];
+const wfDictMap = ref({});
+const isDictReady = ref(false);
+
+onMounted(async () => {
+  const dict = await useDict('wf_business_status');
+  wfDictMap.value = _.keyBy(dict.wf_business_status, 'value');
+  isDictReady.value = true;
+});
 
 const queryFormRef = ref<ElFormInstance>();
 
@@ -134,6 +153,16 @@ const data = reactive<PageData<LeaveForm, LeaveQuery>>({
 });
 
 const { queryParams } = toRefs(data);
+pageTable.form = queryParams.value;
+pageTable.columns = [
+  { label: 'id', prop: 'id', show: false },
+  { label: '请假类型', prop: 'leaveType', show: true },
+  { label: '开始时间', prop: 'startDate', show: true },
+  { label: '结束时间', prop: 'endDate', show: true },
+  { label: '请假天数', prop: 'leaveDays', show: true },
+  { label: '请假原因', prop: 'remark', show: true },
+  { label: '流程状态', prop: 'status', show: true }
+];
 
 /** 查询请假列表 */
 const getList = async () => {
@@ -222,7 +251,7 @@ const handleExport = () => {
 const handleCancelProcessApply = async (id: string) => {
   await proxy?.$modal.confirm('是否确认撤销当前单据？');
   loading.value = true;
-  let data = {
+  const data = {
     businessId: id,
     message: '申请人撤销流程！'
   };

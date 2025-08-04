@@ -20,13 +20,12 @@ export default function () {
     sheetName: ''
   });
   function getButtonsData() {
-    getButtons({ path: route.fullPath }).then(({ code, data, msg }) => {
+    getButtons({ path: route.meta.component }).then(({ code, data, msg }) => {
       pageTable.row = data.row;
       pageTable.top = data.top;
     });
   }
   getButtonsData();
-
 
   return {
     pageTable

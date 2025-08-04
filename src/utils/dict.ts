@@ -1,26 +1,36 @@
-import { getDicts } from '@/api/system/dict/data';
 import { useDictStore } from '@/store/modules/dict';
-/**
- * 获取字典数据
- */
-export const useDict = (...args: string[]): { [key: string]: DictDataOption[] } => {
-  const res = ref<{
-    [key: string]: DictDataOption[];
-  }>({});
+import { getDicts } from '@/api/system/dict/data';
 
-  args.forEach(async (dictType) => {
-    res.value[dictType] = [];
-    const dicts = useDictStore().getDict(dictType);
-    if (dicts) {
-      res.value[dictType] = dicts;
-    } else {
-      await getDicts(dictType).then((resp) => {
-        res.value[dictType] = resp.data.map(
-          (p): DictDataOption => ({ label: p.dictLabel, value: p.dictValue, elTagType: p.listClass, elTagClass: p.cssClass })
+export interface DictDataOption {
+  label: string;
+  value: string;
+  elTagType?: string;
+  elTagClass?: string;
+}
+
+export const useDict = async (...args: string[]): Promise<{ [key: string]: DictDataOption[] }> => {
+  const store = useDictStore();
+  const result: { [key: string]: DictDataOption[] } = {};
+
+  await Promise.all(
+    args.map(async (dictType) => {
+      const cached = store.getDict(dictType);
+      if (cached) {
+        result[dictType] = cached;
+      } else {
+        const resp = await getDicts(dictType);
+        result[dictType] = resp.data.map(
+          (p): DictDataOption => ({
+            label: p.dictLabel,
+            value: p.dictValue,
+            elTagType: p.listClass,
+            elTagClass: p.cssClass
+          })
         );
-        useDictStore().setDict(dictType, res.value[dictType]);
-      });
-    }
-  });
-  return res.value;
+        store.setDict(dictType, result[dictType]);
+      }
+    })
+  );
+
+  return result;
 };
