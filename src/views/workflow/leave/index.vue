@@ -103,6 +103,7 @@ import { LeaveForm, LeaveQuery, LeaveVO } from '@/api/workflow/leave/types';
 import ListComposition from '@/composition/ListComposition';
 import _ from 'lodash';
 import { useDict } from '@/utils/dict';
+const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const { pageTable } = ListComposition();
 const leaveList = ref<LeaveVO[]>([]);
