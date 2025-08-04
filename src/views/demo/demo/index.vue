@@ -42,9 +42,9 @@
             :single="single"
             :multiple="multiple"
           />
-          <el-col :span="1.5">
-            <el-button v-hasPermi="['demo:demo:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>
-          </el-col>
+          <!--          <el-col :span="1.5">-->
+          <!--            <el-button v-hasPermi="['demo:demo:export']" type="warning" plain icon="Download" @click="handleExport">导出</el-button>-->
+          <!--          </el-col>-->
           <right-toolbar v-model:show-search="showSearch" @query-table="getList"></right-toolbar>
         </el-row>
       </template>
@@ -68,12 +68,13 @@
 
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-tooltip content="修改" placement="top">
-              <el-button v-hasPermi="['demo:demo:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"></el-button>
-            </el-tooltip>
-            <el-tooltip content="删除" placement="top">
-              <el-button v-hasPermi="['demo:demo:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>
-            </el-tooltip>
+            <row-button :pageTable="pageTable" @handleUpdate="handleUpdate(scope.row)" @handleDelete="handleDelete(scope.row)" />
+            <!--            <el-tooltip content="修改" placement="top">-->
+            <!--              <el-button v-hasPermi="['demo:demo:edit']" link type="primary" icon="Edit" @click="handleUpdate(scope.row)"></el-button>-->
+            <!--            </el-tooltip>-->
+            <!--            <el-tooltip content="删除" placement="top">-->
+            <!--              <el-button v-hasPermi="['demo:demo:remove']" link type="primary" icon="Delete" @click="handleDelete(scope.row)"></el-button>-->
+            <!--            </el-tooltip>-->
           </template>
         </el-table-column>
       </el-table>
