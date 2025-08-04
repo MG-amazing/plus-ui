@@ -23,8 +23,7 @@
         <el-row :gutter="10" class="mb8">
           <top-button
             @handleAdd="handleAdd"
-            @handleUpdate="handleUpdate"
-            @handleDelete="handleDelete"
+            @exportExcel="exportExcel"
             :tops="pageTable.top"
             :pageTable="pageTable"
             :single="single"
@@ -85,6 +84,7 @@
       </el-table>
 
       <pagination
+        ref="pageRef"
         v-show="total > 0"
         v-model:page="queryParams.pageNum"
         v-model:limit="queryParams.pageSize"
@@ -105,6 +105,7 @@ import _ from 'lodash';
 import { useDict } from '@/utils/dict';
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
+const pageRef = ref(null);
 const { pageTable } = ListComposition();
 const leaveList = ref<LeaveVO[]>([]);
 const loading = ref(true);
@@ -246,6 +247,14 @@ const handleExport = () => {
     },
     `leave_${new Date().getTime()}.xlsx`
   );
+};
+/**
+ * 导出Excel
+ */
+const exportExcel = () => {
+  pageTable.fileName = '请假信息.xlsx';
+  pageTable.customize = 'invokeData';
+  pageRef.value.exportExcel();
 };
 
 /** 撤销按钮操作 */

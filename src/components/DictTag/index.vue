@@ -58,8 +58,8 @@ const unmatch = computed(() => {
   // 传入值为非数组
   let unmatch = false; // 添加一个标志来判断是否有未匹配项
   values.value.forEach((item) => {
-    if (!props.options.some((v) => v.value === item)) {
-      unmatch = true; // 如果有未匹配项，将标志设置为true
+    if (Array.isArray(props.options) && !props.options.some((v) => v.value === item)) {
+      unmatch = true;
     }
   });
   return unmatch; // 返回标志的值

@@ -17,7 +17,8 @@ export default function () {
     row: [],
     top: [],
     type: '0', //导出本页 0 导出全部1
-    sheetName: ''
+    sheetName: '',
+    customize: ''
   });
   function getButtonsData() {
     getButtons({ path: route.meta.component }).then(({ code, data, msg }) => {
