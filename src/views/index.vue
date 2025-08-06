@@ -42,8 +42,8 @@
         <p>
           <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/MG-amazing/RuoYi-Vue-Plus-Excel')">访问码云</el-button>
           <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://github.com/MG-amazing/RuoYi-Vue-Plus-Excel')">访问GitHub</el-button>
-          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://plus-doc.dromara.org/#/ruoyi-vue-plus/changlog')"
-            >更新日志</el-button
+<!--          <el-button type="primary" icon="Cloudy" plain @click="goTarget('https://plus-doc.dromara.org/#/ruoyi-vue-plus/changlog')"-->
+<!--            >更新日志</el-button-->
           >
         </p>
       </el-col>
