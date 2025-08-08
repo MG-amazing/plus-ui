@@ -1,6 +1,10 @@
 > 🌐 **Multilingual Versions**  
 >  [中文](../README.md)  
->  [English](export_tutorial_en.md)
+>  [English](export_tutorial_en.md) 
+
+## 📚 デモURL
+デモURL [http://35.77.227.88/](http://35.77.227.88/)
+
 # 📦 フロントエンド手動設定によるエクスポート機能チュートリアル
 
 このチュートリアルでは、**フロントエンドで手動設定して Excel
