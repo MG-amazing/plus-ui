@@ -1,3 +1,8 @@
+# RuoYi-Vue-Plus-Excel
+> 🌐 **Multilingual Versions**  
+> 🇯🇵 [日本語](./md/export_tutorial_jp.md)  
+> 🇺🇸 [English Version](./md/export_tutorial_en.md)
+
 # 📦 前端手动配置导出功能教程
 
 本教程将带你一步步完成 **前端手动配置导出 Excel 的全过程**，无需写导出逻辑代码，也能完成复杂的数据导出任务 🧙‍♂️📊
