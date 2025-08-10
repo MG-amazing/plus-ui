@@ -2,7 +2,7 @@
 >  [中文](../README.md)  
 >  [日本語](export_tutorial_jp.md)
 ## 📚Demo
-Demo URL [http://35.77.227.88/](http://35.77.227.88/)
+Demo URL [https://mgamazing.asia/](https://mgamazing.asia/)
 # 📦 Frontend Manual Configuration Export Function Tutorial
 
 This tutorial walks you through **the entire process of manually
